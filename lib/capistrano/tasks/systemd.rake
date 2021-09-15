@@ -87,10 +87,13 @@ namespace :sidekiq do
   end
 
   def compiled_template
+    local_template_directory = fetch(:sidekiq_service_templates_path)
     search_paths = [
+      File.join(local_template_directory, "#{fetch(:sidekiq_service_unit_name)}.service.capistrano.erb"),
+      File.join(local_template_directory, 'sidekiq.service.capistrano.erb'),
       File.expand_path(
-          File.join(*%w[.. .. .. generators capistrano sidekiq systemd templates sidekiq.service.capistrano.erb]),
-          __FILE__
+        File.join(*%w[.. .. .. generators capistrano sidekiq systemd templates sidekiq.service.capistrano.erb]),
+        __FILE__
       ),
     ]
     template_path = search_paths.detect { |path| File.file?(path) }
