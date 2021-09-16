@@ -20,10 +20,10 @@ And then execute:
     require 'capistrano/sidekiq'
     install_plugin Capistrano::Sidekiq  # Default sidekiq tasks
     # Then select your service manager
-    install_plugin Capistrano::Sidekiq::Systemd 
-    # or  
+    install_plugin Capistrano::Sidekiq::Systemd
+    # or
     install_plugin Capistrano::Sidekiq::Upstart  # tests needed
-    # or  
+    # or
     install_plugin Capistrano::Sidekiq::Monit  # tests needed
 ```
 
@@ -36,6 +36,16 @@ Configurable options, shown here with defaults:
 :sidekiq_pid => File.join(shared_path, 'tmp', 'pids', 'sidekiq.pid') # ensure this path exists in production before deploying.
 :sidekiq_env => fetch(:rack_env, fetch(:rails_env, fetch(:stage)))
 :sidekiq_log => File.join(shared_path, 'log', 'sidekiq.log')
+# single config
+:sidekiq_config => 'config/sidekiq.yml'
+# per process config - process 1, process 2,... etc.
+:sidekiq_config => [
+    'config/sidekiq_config1.yml',
+    'config/sidekiq_config2.yml'
+]
+:sidekiq_concurrency => 25
+:sidekiq_queues => %w(default high low)
+:sidekiq_processes => 1 # number of systemd processes you want to start
 
 # sidekiq systemd options
 :sidekiq_service_templates_path => 'config/deploy/templates' # to be used if a custom template is needed (filaname should be #{fetch(:sidekiq_service_unit_name)}.service.capistrano.erb or sidekiq.service.capistrano.erb
@@ -51,10 +61,11 @@ Configurable options, shown here with defaults:
 :monit_bin => '/usr/bin/monit'
 :sidekiq_monit_default_hooks => true
 :sidekiq_monit_group => nil
-:sidekiq_service_name => "sidekiq_#{fetch(:application)}" 
+:sidekiq_service_name => "sidekiq_#{fetch(:application)}"
 
 :sidekiq_user => nil #user to run sidekiq as
 ```
+See `capistrano/sidekiq/helpers.rb` for other undocumented configuration settings.
 
 ## Known issues with Capistrano 3
 
@@ -86,6 +97,14 @@ If your deploy user has no need in `sudo` for using monit, you can disable it as
 ```ruby
 set :sidekiq_monit_use_sudo, false
 ```
+
+## Configuring the log files on systems with less recent Systemd versions
+
+The template used by this project assumes a recent version of Systemd (v240+, e.g. Ubuntu 20.04).
+
+On systems with a less recent version, the `append:` functionality is not supported, and the Sidekiq log messages are sent to the syslog.
+
+It's possible to workaround this limitation by configuring the system logger to filter the Sidekiq messages; see [wiki](/../../wiki/Configuring-append-mode-log-files-via-Syslog-NG).
 
 ## Contributing
 
