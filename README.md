@@ -1,3 +1,24 @@
+# Fork purpose
+https://github.com/tusker-direct/capistrano-sidekiq/pull/5
+
+This branch [(pull request here)](https://github.com/tusker-direct/capistrano-sidekiq/pull/5) was used to create the 'v2.1.0' tag which our applications are using for systemd templating. Anyone wanting to customise their systemd templating should tag v2.1.0 until it becomes available in the main community repository.
+
+The [main community repository](ttps://github.com/seuros/capistrano-sidekiq) supports custom templating in master, however it has not been released to a stable version yet.
+
+This will tie us over until a stable version has been released.
+
+Commit hash from: seuros/capistrano-sidekiq@4fd530f.
+
+Also some aesthetic changes.
+
+## Fork Usage
+```
+gem 'capistrano-sidekiq', git: 'git@github.com:tusker-direct/capistrano-sidekiq.git', tag: 'v2.1.0'
+```
+
+-----
+
+
 [![Gem Version](https://badge.fury.io/rb/capistrano-sidekiq.svg)](http://badge.fury.io/rb/capistrano-sidekiq)
 
 # Capistrano::Sidekiq
